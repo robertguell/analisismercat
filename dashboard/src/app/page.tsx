@@ -2,10 +2,9 @@
 
 import { useState, useCallback } from "react"
 import { useReportData } from "@/hooks/use-report-data"
-import { LanguageProvider } from "@/hooks/use-language"
+import { LanguageProvider, useLanguage } from "@/hooks/use-language"
 import { LanguagePicker } from "@/components/report/LanguagePicker"
 import { ReportHeader } from "@/components/report/ReportHeader"
-import { Toolbar } from "@/components/report/Toolbar"
 import { ExecutiveSummary } from "@/components/report/ExecutiveSummary"
 import { MacroEnvironment } from "@/components/report/MacroEnvironment"
 import { PortfolioAllocation } from "@/components/report/PortfolioAllocation"
@@ -21,9 +20,8 @@ import { Footer } from "@/components/report/Footer"
 import { LoadingSkeleton } from "@/components/report/LoadingSkeleton"
 
 function ReportContent() {
-  const { data, loading, error } = useReportData()
-  const [filter, setFilter] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
+  const { lang } = useLanguage()
+  const { data, loading, error } = useReportData(lang)
   const [openSectors, setOpenSectors] = useState<string[]>([])
 
   const handleSectorClick = useCallback((sector: string) => {
@@ -67,12 +65,7 @@ function ReportContent() {
       <LanguagePicker />
       <main id="main-content" className="mx-auto max-w-5xl px-4 pb-12 sm:px-6 lg:px-10">
         <ReportHeader data={data} />
-        <Toolbar
-          activeFilter={filter}
-          onFilterChange={setFilter}
-          onSearchChange={setSearchQuery}
-        />
-        <div className="space-y-8">
+        <div className="mt-6 space-y-8">
           <ExecutiveSummary summary={data.executive_summary} />
           <div className="grid gap-4 md:grid-cols-2">
             <MacroEnvironment macro={data.macro_environment} />
@@ -83,8 +76,6 @@ function ReportContent() {
           <TopPicksGrid
             picks={data.risk_adjusted_picks}
             sectors={data.sectors}
-            filter={filter}
-            searchQuery={searchQuery}
           />
           <SectorOverview
             sectors={data.sectors}

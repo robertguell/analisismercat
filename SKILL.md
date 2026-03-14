@@ -49,10 +49,10 @@ If no history exists, that's fine — this is the first run.
 Launch **all 4 agents in parallel** using the Agent tool in a single message. Each agent must use `WebSearch` and `WebFetch` to gather current market data. Pass each agent its sector-specific prompt from the agent-prompts file.
 
 The 4 sector agents are:
-1. **Crypto Agent** — Researches: BTC, ETH, SOL, XRP, BNB
-2. **Stocks Agent** — Researches: S&P 500, NASDAQ, AAPL, NVDA, MSFT, GOOGL, TSLA
-3. **Currencies Agent** — Researches: EUR/USD, GBP/USD, USD/JPY, USD/MXN, DXY Index
-4. **Materials Agent** — Researches: Gold, Silver, Oil (WTI), Natural Gas, Copper
+1. **Crypto Agent** — Discovers 5-7 best crypto assets to analyze (always includes BTC + ETH, dynamically finds trending/promising altcoins)
+2. **Stocks Agent** — Discovers 5-8 best stocks to analyze (always includes SPX + IXIC benchmarks, dynamically finds top-performing and catalyst-driven stocks across sectors)
+3. **Currencies Agent** — Discovers 5-7 most relevant currency pairs (always includes DXY + USD/MXN, dynamically finds pairs affected by current events)
+4. **Materials Agent** — Discovers 5-7 best commodities to analyze (always includes Gold + Oil WTI, dynamically finds trending commodities including agricultural if relevant)
 
 Each agent MUST return a JSON block in this exact schema:
 
@@ -196,6 +196,29 @@ If `dashboard/package.json` does not exist (Node.js not set up):
 2. Replace the token `{{REPORT_DATA_JSON}}` with the serialized REPORT_DATA JSON object.
 3. Create the `output/` directory if it doesn't exist.
 4. Write the populated HTML to `output/report.html`.
+
+### Step 8b: Translate Report to Spanish
+
+After writing the English report, spawn a **Translation Agent** to create a Spanish version:
+
+1. Read the English report from `dashboard/public/data/report.json`.
+2. Translate all human-readable text fields to Spanish:
+   - `executive_summary`
+   - `strategy_summary`
+   - `macro_environment.summary`
+   - `macro_environment.key_factors[]`
+   - `cross_sector_insights[].insight`
+   - `cross_sector_insights[].implication`
+   - `warnings[]`
+   - `historical_accuracy.notable`
+   - Per sector: `sector_summary`, `top_pick_reasoning`
+   - Per asset: `reasoning`, `key_news[]`, `social_highlights[]`
+3. Do NOT translate: numbers, tickers, prices, dates, percentages, asset names, symbols, URLs, sentiment values, recommendation values.
+4. Write the translated report to `dashboard/public/data/report-es.json`.
+
+The translation agent prompt:
+
+> You are a financial translator. Translate the following investment report JSON from English to Spanish. Translate only the human-readable text fields listed above. Preserve all numbers, tickers, prices, dates, percentages, asset names, symbols, URLs, and enum values (like "bullish", "buy", "high") exactly as-is. Return valid JSON with the same structure.
 
 ### Step 9: Serve the Report
 
