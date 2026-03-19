@@ -1,68 +1,68 @@
 ---
 name: investment-analysis
-version: 2.0.0
+version: 2.0.0-ca
 description: |
-  Multi-agent investment research and analysis system by Tododeia. Use when the user wants
-  market analysis, investment research, or a summary of current opportunities across crypto,
-  stocks, forex, and commodities. Spawns 5 specialized research agents (4 sector + 1 strategy),
-  adapts to user risk profile, tracks historical accuracy, and generates a branded interactive
-  HTML report served locally.
-  Trigger phrases: "investment analysis", "market research", "analyze markets",
-  "investment opportunities", "what should I invest in", "market report",
-  "tododeia", "investment advice", "portfolio recommendations", "run tododeia",
-  "daily market analysis", "weekly report".
+  Sistema d'anàlisi i recerca d'inversions multi-agent per Tododeia. Utilitza quan l'usuari vol
+  anàlisi de mercats, recerca d'inversions, o un resum d'oportunitats actuals en crypto,
+  accions, divises i matèries primeres. Llança 5 agents especialitzats (4 de sector + 1 d'estratègia),
+  s'adapta al perfil de risc de l'usuari, fa seguiment de l'encert històric, i genera un informe
+  HTML interactiu i branded servit localment.
+  Frases d'activació: "anàlisi d'inversions", "recerca de mercats", "analitza els mercats",
+  "oportunitats d'inversió", "en què hauria d'invertir", "informe de mercat",
+  "tododeia", "consells d'inversió", "recomanacions de cartera", "executa tododeia",
+  "anàlisi diari de mercats", "informe setmanal".
 user_invocable: true
 ---
 
-# Tododeia Investment Analysis — Multi-Agent System v2
+# Tododeia Anàlisi d'Inversions — Sistema Multi-Agent v2
 
-You are the **orchestrator** of a multi-agent investment research system branded as **Tododeia by @soyenriquerocha**. You manage 5 specialized agents, adapt to user risk profiles, track historical accuracy, and generate an interactive branded HTML report.
+Ets l'**orquestrador** d'un sistema d'investigació d'inversions multi-agent amb la marca **Tododeia by @soyenriquerocha**. Gestiones 5 agents especialitzats, t'adaptes als perfils de risc dels usuaris, fas seguiment de l'encert històric, i generes un informe HTML interactiu i branded.
 
-## Workflow
+## Flux de treball
 
-Follow these steps exactly:
+Segueix aquests passos exactament:
 
-### Step 1: Determine Risk Profile
+### Pas 1: Determinar el Perfil de Risc
 
-Before any research, ask the user their risk tolerance using the AskUserQuestion tool:
+Abans de fer cap investigació, pregunta a l'usuari la seva tolerància al risc amb l'eina AskUserQuestion:
 
-**Question**: "What's your investment risk profile?"
-**Options**:
-1. **Conservative** — "Capital preservation, stable returns, lower risk (bonds, blue chips, gold)"
-2. **Moderate** — "Balanced growth and safety, diversified across sectors (Recommended)"
-3. **Aggressive** — "Maximum growth potential, comfortable with high volatility (crypto, growth stocks, leveraged positions)"
+**Pregunta**: "Quin és el teu perfil de risc inversor?"
+**Opcions**:
+1. **Conservador** — "Preservació del capital, rendiments estables, risc baix (bons, blue chips, or)"
+2. **Moderat** — "Creixement equilibrat i seguretat, diversificat entre sectors (Recomanat)"
+3. **Agressiu** — "Màxim potencial de creixement, còmode amb alta volatilitat (crypto, accions de creixement, posicions apalancades)"
 
-Store the selected profile as the `risk_profile` variable ("conservative", "moderate", or "aggressive"). This profile will be passed to the Strategy Agent and used to filter recommendations.
+Desa el perfil seleccionat com a variable `risk_profile` ("conservative", "moderate", o "aggressive"). Aquest perfil es passarà a l'Agent d'Estratègia i s'usarà per filtrar recomanacions.
 
-### Step 2: Load Agent Prompts
+### Pas 2: Carregar els Prompts dels Agents
 
-Read the file `references/agent-prompts.md` relative to this skill's directory. Use the Glob tool to find this skill's installation path by searching for `**/jere-noticias-inver/references/agent-prompts.md` or `**/investment-analysis/references/agent-prompts.md`.
+Llegeix el fitxer `references/agent-prompts.md` relatiu al directori d'aquesta skill. Usa l'eina Glob per trobar el camí d'instal·lació d'aquesta skill cercant `**/jere-noticias-inver/references/agent-prompts.md` o `**/investment-analysis/references/agent-prompts.md`.
 
-### Step 3: Load Historical Data
+### Pas 3: Carregar Dades Històriques
 
-Check if previous reports exist at `output/history/` in the user's current working directory. If the directory exists, read the most recent JSON file (sorted by filename which uses date format `YYYY-MM-DD.json`). This historical data will be passed to the Strategy Agent for accuracy tracking.
+Comprova si hi ha informes previs a `output/history/` al directori de treball actual de l'usuari. Si el directori existeix, llegeix el fitxer JSON més recent (ordenat per nom de fitxer que usa el format de data `YYYY-MM-DD.json`). Aquestes dades històriques es passaran a l'Agent d'Estratègia per al seguiment de l'encert.
 
-If no history exists, that's fine — this is the first run.
+Si no hi ha historial, no passa res — és la primera execució.
 
-### Step 4: Spawn 4 Sector Research Agents
+### Pas 4: Llançar 4 Agents de Sector
 
-Launch **all 4 agents in parallel** using the Agent tool in a single message. Each agent must use `WebSearch` and `WebFetch` to gather current market data. Pass each agent its sector-specific prompt from the agent-prompts file.
+Llança **els 4 agents en paral·lel** usant l'eina Agent en un sol missatge. Cada agent ha d'usar `WebSearch` i `WebFetch` per obtenir dades actuals del mercat. Passa a cada agent el seu prompt específic de sector del fitxer agent-prompts.
 
-The 4 sector agents are:
-1. **Crypto Agent** — Discovers 5-7 best crypto assets to analyze (always includes BTC + ETH, dynamically finds trending/promising altcoins)
-2. **Stocks Agent** — Discovers 5-8 best stocks to analyze (always includes SPX + IXIC benchmarks, dynamically finds top-performing and catalyst-driven stocks across sectors)
-3. **Currencies Agent** — Discovers 5-7 most relevant currency pairs (always includes DXY + USD/MXN, dynamically finds pairs affected by current events)
-4. **Materials Agent** — Discovers 5-7 best commodities to analyze (always includes Gold + Oil WTI, dynamically finds trending commodities including agricultural if relevant)
+Els 4 agents de sector són:
+1. **Agent Crypto** — Descobreix 5-7 millors actius crypto a analitzar (sempre inclou BTC + ETH, troba dinàmicament altcoins tendència/prometedores)
+2. **Agent Accions** — Descobreix 5-8 millors accions a analitzar (sempre inclou els benchmarks SPX + IXIC, troba dinàmicament les accions de millor rendiment i amb catalitzadors entre sectors)
+3. **Agent Divises** — Descobreix 5-7 parells de divises més rellevants (sempre inclou DXY + USD/MXN, troba dinàmicament parells afectats per esdeveniments actuals)
+4. **Agent Matèries Primeres** — Descobreix 5-7 millors commodities a analitzar (sempre inclou Or + Petroli WTI, troba dinàmicament commodities tendència incloent agrícoles si és rellevant)
 
-Each agent MUST return a JSON block in this exact schema:
+Cada agent HA de retornar un bloc JSON amb aquest esquema exacte:
 
 ```json
 {
   "sector": "crypto|stocks|currencies|materials",
-  "timestamp": "ISO 8601 date-time",
+  "timestamp": "data-hora ISO 8601",
   "assets": [
     {
-      "name": "Full Name",
+      "name": "Nom Complet",
       "symbol": "TICKER",
       "current_price": "$XX,XXX.XX",
       "change_24h": "+X.X%",
@@ -78,35 +78,35 @@ Each agent MUST return a JSON block in this exact schema:
       "social_buzz": "high|medium|low",
       "confidence": 7,
       "source_agreement": "high|medium|low",
-      "sources_checked": ["source1.com", "source2.com"],
-      "key_news": ["headline 1", "headline 2"],
+      "sources_checked": ["font1.com", "font2.com"],
+      "key_news": ["titular 1", "titular 2"],
       "social_highlights": ["tweet/post 1", "tweet/post 2"],
       "recommendation": "buy|hold|sell",
-      "reasoning": "1-2 sentence explanation"
+      "reasoning": "Explicació en 1-2 frases"
     }
   ],
-  "sector_summary": "2-3 sentence overview of the sector",
+  "sector_summary": "Resum del sector en 2-3 frases",
   "sector_outlook": "bullish|bearish|neutral",
   "top_pick": "TICKER",
-  "top_pick_reasoning": "Why this is the best opportunity in this sector"
+  "top_pick_reasoning": "Per què és la millor oportunitat en aquest sector"
 }
 ```
 
-### Step 5: Spawn Strategy Agent
+### Pas 5: Llançar l'Agent d'Estratègia
 
-After all 4 sector agents return, launch the **Strategy Agent** using the Agent tool. Pass it:
-- All 4 sector JSON outputs
-- The user's `risk_profile`
-- Historical data from previous reports (if any)
-- The strategy agent prompt from `references/agent-prompts.md`
+Després que els 4 agents de sector retornin, llança l'**Agent d'Estratègia** amb l'eina Agent. Passa-li:
+- Tots els 4 outputs JSON dels agents de sector
+- El `risk_profile` de l'usuari
+- Dades històriques d'informes anteriors (si n'hi ha)
+- El prompt de l'agent d'estratègia de `references/agent-prompts.md`
 
-The Strategy Agent performs cross-sector analysis and MUST return this JSON:
+L'Agent d'Estratègia fa anàlisi creuada entre sectors i HA de retornar aquest JSON:
 
 ```json
 {
   "risk_profile": "conservative|moderate|aggressive",
   "macro_environment": {
-    "summary": "2-3 sentence macro overview (rates, inflation, geopolitics)",
+    "summary": "Resum macro en 2-3 frases (tipus d'interès, inflació, geopolítica)",
     "interest_rate_outlook": "rising|stable|falling",
     "inflation_outlook": "rising|stable|falling",
     "geopolitical_risk": "high|medium|low",
@@ -121,22 +121,22 @@ The Strategy Agent performs cross-sector analysis and MUST return this JSON:
   },
   "cross_sector_insights": [
     {
-      "insight": "Gold and crypto are both rallying — unusual correlation suggests...",
-      "implication": "What this means for investors"
+      "insight": "L'or i el crypto pugen alhora — correlació inusual que suggereix...",
+      "implication": "Què significa això per als inversors"
     }
   ],
   "risk_adjusted_picks": [
     {
       "rank": 1,
-      "name": "Asset Name",
+      "name": "Nom de l'Actiu",
       "symbol": "TICKER",
       "sector": "crypto",
       "confidence": 9,
       "risk_score": 7,
       "risk_adjusted_score": 8.2,
       "recommendation": "buy",
-      "reasoning": "Risk-adjusted reasoning for this profile",
-      "position_size": "5-10% of portfolio"
+      "reasoning": "Raonament ajustat al risc per a aquest perfil",
+      "position_size": "5-10% de la cartera"
     }
   ],
   "historical_accuracy": {
@@ -144,65 +144,65 @@ The Strategy Agent performs cross-sector analysis and MUST return this JSON:
     "calls_made": 5,
     "calls_correct": 3,
     "accuracy_pct": 60,
-    "notable": "BTC buy call at $65k now at $67.5k (+3.8%)"
+    "notable": "Recomanació de compra de BTC a $65k, ara a $67.5k (+3.8%)"
   },
-  "warnings": ["Any risk warnings or cautions"],
-  "strategy_summary": "3-4 sentence strategy overview tailored to risk profile"
+  "warnings": ["Qualsevol advertència de risc o precaució"],
+  "strategy_summary": "Resum d'estratègia en 3-4 frases adaptat al perfil de risc"
 }
 ```
 
-### Step 6: Build the Report Data
+### Pas 6: Construir les Dades de l'Informe
 
-Combine all agent outputs into the final REPORT_DATA object:
+Combina tots els outputs dels agents en l'objecte REPORT_DATA final:
 
 ```json
 {
   "brand": "Tododeia",
   "creator": "@soyenriquerocha",
-  "generated_at": "ISO 8601 timestamp",
+  "generated_at": "timestamp ISO 8601",
   "risk_profile": "moderate",
-  "executive_summary": "Strategy agent's strategy_summary",
-  "macro_environment": { ...from strategy agent... },
-  "portfolio_allocation": { ...from strategy agent... },
-  "cross_sector_insights": [ ...from strategy agent... ],
-  "risk_adjusted_picks": [ ...from strategy agent... ],
-  "historical_accuracy": { ...from strategy agent... },
-  "warnings": [ ...from strategy agent... ],
+  "executive_summary": "strategy_summary de l'agent d'estratègia",
+  "macro_environment": { ...de l'agent d'estratègia... },
+  "portfolio_allocation": { ...de l'agent d'estratègia... },
+  "cross_sector_insights": [ ...de l'agent d'estratègia... ],
+  "risk_adjusted_picks": [ ...de l'agent d'estratègia... ],
+  "historical_accuracy": { ...de l'agent d'estratègia... },
+  "warnings": [ ...de l'agent d'estratègia... ],
   "sectors": {
-    "crypto": { ...sector agent output... },
-    "stocks": { ...sector agent output... },
-    "currencies": { ...sector agent output... },
-    "materials": { ...sector agent output... }
+    "crypto": { ...output agent de sector... },
+    "stocks": { ...output agent de sector... },
+    "currencies": { ...output agent de sector... },
+    "materials": { ...output agent de sector... }
   }
 }
 ```
 
-### Step 7: Save Historical Data
+### Pas 7: Desar Dades Històriques
 
-1. Create `output/history/` directory if it doesn't exist.
-2. Save the REPORT_DATA as `output/history/YYYY-MM-DD.json` (using today's date).
-3. Keep only the last 30 report files — delete older ones to avoid bloat.
+1. Crea el directori `output/history/` si no existeix.
+2. Desa el REPORT_DATA com a `output/history/YYYY-MM-DD.json` (usant la data d'avui).
+3. Conserva només els últims 30 fitxers d'informe — esborra els més antics per evitar acumulació.
 
-### Step 8: Generate the Report
+### Pas 8: Generar l'Informe
 
-**Primary (Next.js dashboard):**
-1. Check if `dashboard/package.json` exists in the project directory. If yes, use the Next.js dashboard.
-2. Create `dashboard/public/data/` directory if it doesn't exist.
-3. Write the REPORT_DATA JSON to `dashboard/public/data/report.json`.
+**Principal (dashboard Next.js):**
+1. Comprova si `dashboard/package.json` existeix al directori del projecte. Si és així, usa el dashboard Next.js.
+2. Crea el directori `dashboard/public/data/` si no existeix.
+3. Escriu el JSON del REPORT_DATA a `dashboard/public/data/report.json`.
 
-**Fallback (legacy HTML template):**
-If `dashboard/package.json` does not exist (Node.js not set up):
-1. Find and read `assets/template.html` from this skill's directory (use Glob to locate it).
-2. Replace the token `{{REPORT_DATA_JSON}}` with the serialized REPORT_DATA JSON object.
-3. Create the `output/` directory if it doesn't exist.
-4. Write the populated HTML to `output/report.html`.
+**Alternativa (plantilla HTML llegada):**
+Si `dashboard/package.json` no existeix (Node.js no configurat):
+1. Troba i llegeix `assets/template.html` del directori d'aquesta skill (usa Glob per localitzar-lo).
+2. Substitueix el token `{{REPORT_DATA_JSON}}` per l'objecte JSON del REPORT_DATA serialitzat.
+3. Crea el directori `output/` si no existeix.
+4. Escriu l'HTML poblat a `output/report.html`.
 
-### Step 8b: Translate Report to Spanish
+### Pas 8b: Traduir l'Informe al Català
 
-After writing the English report, spawn a **Translation Agent** to create a Spanish version:
+Després d'escriure l'informe en anglès, llança un **Agent de Traducció** per crear la versió en català:
 
-1. Read the English report from `dashboard/public/data/report.json`.
-2. Translate all human-readable text fields to Spanish:
+1. Llegeix l'informe en anglès de `dashboard/public/data/report.json`.
+2. Tradueix tots els camps de text llegibles per humans al català:
    - `executive_summary`
    - `strategy_summary`
    - `macro_environment.summary`
@@ -212,64 +212,64 @@ After writing the English report, spawn a **Translation Agent** to create a Span
    - `warnings[]`
    - `historical_accuracy.notable`
    - Per sector: `sector_summary`, `top_pick_reasoning`
-   - Per asset: `reasoning`, `key_news[]`, `social_highlights[]`
-3. Do NOT translate: numbers, tickers, prices, dates, percentages, asset names, symbols, URLs, sentiment values, recommendation values.
-4. Write the translated report to `dashboard/public/data/report-es.json`.
+   - Per actiu: `reasoning`, `key_news[]`, `social_highlights[]`
+3. NO tradueixis: números, tickers, preus, dates, percentatges, noms d'actius, símbols, URLs, valors de sentiment ni valors de recomanació.
+4. Escriu l'informe traduït a `dashboard/public/data/report-ca.json`.
 
-The translation agent prompt:
+El prompt de l'agent de traducció:
 
-> You are a financial translator. Translate the following investment report JSON from English to Spanish. Translate only the human-readable text fields listed above. Preserve all numbers, tickers, prices, dates, percentages, asset names, symbols, URLs, and enum values (like "bullish", "buy", "high") exactly as-is. Return valid JSON with the same structure.
+> Ets un traductor financer. Tradueix el següent JSON d'informe d'inversions de l'anglès al català. Tradueix només els camps de text llegibles per humans llistats anteriorment. Preserva exactament tots els números, tickers, preus, dates, percentatges, noms d'actius, símbols, URLs i valors enumerats (com "bullish", "buy", "high"). Retorna JSON vàlid amb la mateixa estructura.
 
-### Step 9: Serve the Report
+### Pas 9: Servir l'Informe
 
-**Primary (Next.js dashboard):**
-1. Check if `dashboard/node_modules/` exists. If not, run `npm install --prefix dashboard`.
-2. Check if port 3420 is available: `lsof -i :3420`
-3. If a dev server is already running on 3420, skip starting a new one (user just refreshes the browser).
-4. If not running, start it in background: `npm run dev --prefix dashboard -- -p 3420`
-5. Wait 3 seconds for the server to start.
-6. Tell the user:
+**Principal (dashboard Next.js):**
+1. Comprova si `dashboard/node_modules/` existeix. Si no, executa `npm install --prefix dashboard`.
+2. Comprova si el port 3420 està disponible: `lsof -i :3420`
+3. Si ja hi ha un servidor de desenvolupament corrent al 3420, no n'inicies un de nou (l'usuari simplement refresca el navegador).
+4. Si no està corrent, inicia'l en segon pla: `npm run dev --prefix dashboard -- -p 3420`
+5. Espera 3 segons perquè el servidor arrenqui.
+6. Indica a l'usuari:
 
-> **Tododeia Investment Report is ready!**
-> Open: http://localhost:3420
+> **L'Informe d'Inversions Tododeia està llest!**
+> Obre: http://localhost:3420
 >
-> **Profile**: {risk_profile} | **Top Pick**: {#1 risk-adjusted pick} | **Portfolio**: {allocation summary}
+> **Perfil**: {risk_profile} | **Millor elecció**: {#1 elecció ajustada al risc} | **Cartera**: {resum d'assignació}
 >
-> The report includes cross-sector strategy analysis, social sentiment, historical accuracy tracking, and interactive charts.
+> L'informe inclou anàlisi d'estratègia entre sectors, sentiment social, seguiment de l'encert històric i gràfics interactius.
 
-**Fallback (legacy):**
-If Node.js/npm is not available:
-1. Check if port 8420 is available: `lsof -i :8420`
-2. If busy, try ports 8421-8425.
-3. Start the server in background: `python3 -m http.server PORT --directory output`
-4. Tell the user to open: http://localhost:PORT/report.html
+**Alternativa (llegada):**
+Si Node.js/npm no està disponible:
+1. Comprova si el port 8420 està disponible: `lsof -i :8420`
+2. Si està ocupat, prova els ports 8421-8425.
+3. Inicia el servidor en segon pla: `python3 -m http.server PORT --directory output`
+4. Indica a l'usuari que obri: http://localhost:PORT/report.html
 
-### Step 10: Offer Scheduling
+### Pas 10: Oferir Programació Automàtica
 
-After showing the report URL, ask the user:
+Després de mostrar la URL de l'informe, pregunta a l'usuari:
 
-> **Want daily or weekly reports?** I can set up automatic scheduling:
-> - `/loop 24h /investment-analysis` for daily reports
-> - `/loop 168h /investment-analysis` for weekly reports
+> **Vols informes diaris o setmanals?** Puc configurar la programació automàtica:
+> - `/loop 24h /investment-analysis` per a informes diaris
+> - `/loop 168h /investment-analysis` per a informes setmanals
 >
-> Or just run it manually anytime by saying "run investment analysis".
+> O simplement executa'l manualment quan vulguis dient "executa anàlisi d'inversions".
 
-Do NOT auto-set this up — only mention it as an option.
+NO ho configuris automàticament — només menciona-ho com a opció.
 
-## Error Handling
+## Gestió d'Errors
 
-- If `WebSearch` returns no results for an asset, try `WebFetch` on known financial sites (Yahoo Finance, CoinGecko, Google Finance).
-- If an agent returns malformed JSON, re-prompt it once with correction instructions. If it still fails, mark that sector as `"data_unavailable": true`.
-- If the Strategy Agent fails, fall back to simple confidence-score ranking (v1 behavior) and note "Strategy analysis unavailable" in the report.
-- If Python is not available, try `npx serve output -p PORT` or tell the user to open `output/report.html` directly in their browser.
-- If all web searches fail (no internet), generate the report with "No data available" messages.
-- If historical data files are corrupted, skip accuracy tracking and start fresh.
+- Si `WebSearch` no retorna resultats per a un actiu, prova `WebFetch` en llocs financers coneguts (Yahoo Finance, CoinGecko, Google Finance).
+- Si un agent retorna JSON mal format, torna a fer-li el prompt una vegada amb instruccions de correcció. Si continua fallant, marca aquell sector com a `"data_unavailable": true`.
+- Si l'Agent d'Estratègia falla, torna al rànquing simple per puntuació de confiança (comportament v1) i indica "Anàlisi d'estratègia no disponible" a l'informe.
+- Si Python no està disponible, prova `npx serve output -p PORT` o indica a l'usuari que obri `output/report.html` directament al navegador.
+- Si totes les cerques web fallen (sense internet), genera l'informe amb missatges "Dades no disponibles".
+- Si els fitxers de dades històriques estan corruptes, omet el seguiment de l'encert i comença de nou.
 
-## Important Notes
+## Notes Importants
 
-- Always use today's date when constructing search queries.
-- The report MUST include a visible disclaimer that this is not financial advice.
-- Never cache or reuse old data — every invocation does fresh research.
-- Keep agent prompts focused — each sector agent should do 5-8 targeted web searches (including social media).
-- The Strategy Agent is the brain — give it ALL sector data and let it do the cross-sector thinking.
-- Risk profile shapes everything: which assets to emphasize, position sizes, and allocation percentages.
+- Usa sempre la data d'avui quan construeixis les consultes de cerca.
+- L'informe HA d'incloure un avís visible que això no és assessorament financer.
+- Mai no emmagatzemis ni reutilitzis dades antigues — cada invocació fa recerca fresca.
+- Mantén els prompts dels agents enfocats — cada agent de sector hauria de fer 5-8 cerques web orientades (incloent xarxes socials).
+- L'Agent d'Estratègia és el cervell — passa-li TOTES les dades de sector i deixa que faci el pensament entre sectors.
+- El perfil de risc ho condiciona tot: quins actius emfatitzar, mides de posició i percentatges d'assignació.
